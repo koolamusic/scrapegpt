@@ -103,3 +103,4 @@ class OpenAiCall {
       throw new Error(`HTML is ${tokens} tokens, max for ${model} is ${maxTokens}`);
     }
   }
+}

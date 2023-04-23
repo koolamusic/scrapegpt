@@ -1,5 +1,5 @@
 {
-  "name": "scraper",
+  "name": "scapegpt",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,7 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cheerio": "^1.0.0-rc.12",
     "openai": "^3.2.1",
+    "structlog": "^1.0.5",
+    "tiktoken": "dqbd/tiktoken",
     "winston": "^3.8.2"
   }
 }
