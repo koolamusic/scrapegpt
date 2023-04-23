@@ -93,14 +93,86 @@ class OpenAiCall {
 
   async _apiRequest(html) {
     let attempts = 0;
-    let modelIndex = 0;
-    let model = this.models[modelIndex];
+    let model_index = 0;
+    let model = this.models[model_index];
 
-    const tokens = /* Calculate tokens based on your own logic */;
-    const maxTokens = /* Calculate max tokens based on your own logic */;
+    const response = new Response();
 
-    if (tokens > maxTokens) {
-      throw new Error(`HTML is ${tokens} tokens, max for ${model} is ${maxTokens}`);
+    if (!html) {
+      throw new Error('html parameter cannot be empty');
     }
+
+    const tokens = _tokens(model, html);
+    if (tokens > _maxTokens(model)) {
+      throw new Error(
+        `HTML is ${tokens} tokens, max for ${model} is ${_maxTokens(model)}`
+      );
+    }
+
+    while (true) {
+      try {
+        attempts += 1;
+        await this._rawApiRequest(
+          model,
+          [
+            ...this.system_messages.map((msg) => ({
+              role: 'system',
+              content: msg,
+            })),
+            {
+              role: 'user',
+              content: html,
+            },
+          ],
+          response
+        );
+        return response;
+      } catch (e) {
+        if (
+          this.retry.retry_errors.includes(e.constructor) ||
+          e.message.includes('TooManyTokens') ||
+          e.message.includes('BadStop')
+        ) {
+          if (attempts < this.retry.max_retries + 1) {
+            if (this.retry.retry_errors.includes(e.constructor)) {
+              // try again with same model
+              await new Promise((resolve) =>
+                setTimeout(resolve, this.retry.retry_wait * 1000)
+              );
+              continue;
+            } else if (model_index < this.models.length - 1) {
+              // try next model
+              model_index += 1;
+              model = this.models[model_index];
+              await new Promise((resolve) =>
+                setTimeout(resolve, this.retry.retry_wait * 1000)
+              );
+              continue;
+            }
+          }
+          throw e; // could not retry for whatever reason
+        }
+      }
+    }
+  }
+
+
+  _applyPostprocessors(response) {
+    for (const pp of this.postprocessors) {
+      response = pp(response, this);
+    }
+    return response;
+  }
+
+  async request(html) {
+    return this._apply_postprocessors(await this._apiRequest(html));
+  }
+
+  stats() {
+    return {
+      total_prompt_tokens: this.total_prompt_tokens,
+      total_completion_tokens: this.total_completion_tokens,
+      total_cost: this.total_cost,
+    };
   }
 }

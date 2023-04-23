@@ -24,3 +24,6 @@ scrape(url).then((result) => {
 
 - [OpenAI API](https://beta.openai.com/docs/api-reference/introduction)
 - [Nodejs Scraping](https://gabrieleromanato.name/nodejs-parsing-a-remote-html-page)
+- [Scrape HTML](https://www.npmjs.com/package/scrape-html)
+- [Scrapeghost.PY](https://github.com/jamesturk/scrapeghost/)
+- [Scrape It](https://www.npmjs.com/package/scrape-it-core)
