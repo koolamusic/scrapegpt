@@ -114,12 +114,13 @@ class SchemaScraper extends OpenAiCall {
         utils._combine_responses(sr, [this._api_request(html)])
       );
     }
-  }
+  };
+
   
   // allow the class to be called like a function
   __call__ = this.scrape;
 
-  function _combine_responses(sr, responses) {
+  _combine_responses(sr, responses) {
     sr.api_responses = responses.flatMap(resp => resp.api_responses);
     sr.total_cost = responses.reduce((acc, resp) => acc + resp.total_cost, 0);
     sr.total_prompt_tokens = responses.reduce((acc, resp) => acc + resp.total_prompt_tokens, 0);
@@ -129,7 +130,7 @@ class SchemaScraper extends OpenAiCall {
     return sr;
   }
   
-  async function _parse_url_or_html(url_or_html) {
+  async _parse_url_or_html(url_or_html) {
     let orig_url = null;
     if (url_or_html.startsWith("http")) {
       orig_url = url_or_html;
@@ -144,7 +145,7 @@ class SchemaScraper extends OpenAiCall {
     return doc.documentElement;
   }
   
-  function _chunk_tags(tags, max_tokens, model) {
+  _chunk_tags(tags, max_tokens, model) {
     const chunks = [];
     const chunk_sizes = [];
     let chunk = "";
@@ -168,7 +169,7 @@ class SchemaScraper extends OpenAiCall {
     return chunks;
   }
   
-  function _pydantic_to_simple_schema(pydantic_model) {
+  _pydantic_to_simple_schema(pydantic_model) {
     const schema = {};
     for (const field of Object.values(pydantic_model.__fields__)) {
       if (field.outer_type_.__fields__) {
@@ -182,8 +183,8 @@ class SchemaScraper extends OpenAiCall {
       }
     }
     return schema;
-  }
-  
+  }  
+
 }
 
 module.exports = SchemaScraper;
