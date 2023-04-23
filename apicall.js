@@ -1,7 +1,7 @@
 const openai = require('openai');
 const winston = require('winston');
 
-const logger = winston.createLogger({
+export const logger = winston.createLogger({
   level: 'info',
   format: winston.format.json(),
   defaultMeta: { service: 'openai-api' },
@@ -12,7 +12,7 @@ const logger = winston.createLogger({
   ],
 });
 
-class RetryRule {
+export class RetryRule {
   constructor(maxRetries = 0, retryWait = 30, retryErrors = [openai.RateLimitError, openai.Timeout, openai.APIConnectionError]) {
     this.maxRetries = maxRetries;
     this.retryWait = retryWait;
@@ -69,7 +69,8 @@ class OpenAiCall {
     const elapsed = (Date.now() - start_t) / 1000;
     const p_tokens = completion.usage.prompt_tokens;
     const c_tokens = completion.usage.completion_tokens;
-    const cost = /* Calculate cost here based on your own logic */;
+    /* Calculate cost here based on your own logic */;
+    const cost = _cost(model, p_tokens, c_tokens);
 
     logger.info({
       message: 'API response',
