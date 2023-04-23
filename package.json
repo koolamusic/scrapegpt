@@ -1,6 +1,6 @@
 {
   "name": "scrapegpt",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A web scraper built with OpenAI GPT to extract structured data from HTML pages based on a given schema.",
   "main": "index.js",
   "scripts": {
