@@ -6,7 +6,7 @@ const Response = require('./responses').Response;
 const ScrapeResponse = require('./responses').ScrapeResponse;
 const CleanHTML = require('./preprocessors').CleanHTML;
 const JSONPostprocessor = require('./postprocessors').JSONPostprocessor;
-const PydanticPostprocessor = require('./postprocessors').PydanticPostprocessor;
+const ValidatorPostprocessor = require('./postprocessors').ValidatorPostprocessor;
 const utils = require('./utils');
 
 class SchemaScraper extends OpenAiCall {
@@ -58,7 +58,7 @@ class SchemaScraper extends OpenAiCall {
       : SchemaScraper._default_preprocessors;
 
     if (use_pydantic) {
-      this.postprocessors.push(new PydanticPostprocessor(schema));
+      this.postprocessors.push(new ValidatorPostprocessor(schema));
     }
 
     this.auto_split_length = auto_split_length;
